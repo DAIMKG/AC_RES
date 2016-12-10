@@ -1,0 +1,11 @@
+4
+<wikicat_Countries>
+<wikicat_Federal_countries>
+<wikicat_Member_states_of_the_United_Nations>
+<wordnet_country_108544813>
+
+3
+<wikicat_Currencies_by_country>
+<wikicat_Currencies_of_Asia>
+<wordnet_currency_113385913>
+

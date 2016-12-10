@@ -1,0 +1,26 @@
+4
+0 0
+1 1
+2 0
+3 0
+
+4
+3 2 <isMarriedTo>
+1 0 <isLocatedIn>
+3 1 <isAffiliatedTo>
+2 0 <isPoliticianOf>
+
+
+4
+0 0
+1 0
+2 1
+3 0
+
+4
+2 0 <isLocatedIn>
+3 1 <isMarriedTo>
+3 2 <graduatedFrom>
+1 0 <isPoliticianOf>
+
+

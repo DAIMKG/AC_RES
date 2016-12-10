@@ -1,0 +1,12 @@
+5
+<wikicat_English-language_films>
+<wikicat_Films_based_on_books>
+<wikicat_Films_based_on_novels>
+<wikicat_Films_directed_by_Ang_Lee>
+<wordnet_movie_106613686>
+
+3
+<wikicat_Actors>
+<wikicat_Living_people>
+<wordnet_person_100007846>
+
