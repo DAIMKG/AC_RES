@@ -9,6 +9,10 @@
 #include <set>
 using namespace std;
 
+const string DataDir = "/Users/wzc/Downloads/yagoFacts.tsv";
+const string InputDir = "/Users/wzc/Desktop/lab/test/input.txt";
+const string OutputDir = "/Users/wzc/Desktop/lab/test/pattern.txt";
+
 const int MAXL = 0x3f3f3f3f;
 const int MAXN = 10000;
 const int N = 7800000, M = 12000000;
@@ -36,7 +40,7 @@ int q[N], h, t, fromNode[N], fromEdge[N];
 int dis[N], disW[N];
 
 void init() {
-	FILE *fp = fopen("/Users/wzc/Downloads/yagoFacts.tsv", "r");
+	FILE *fp = fopen(DataDir.c_str(), "r");
 
 	char *tmp1 = new char[MAXN], *tmp2 = new char[MAXN], *tmp3 = new char[MAXN];
 	int show = 0;
@@ -87,7 +91,7 @@ void buildGraph() {
 void bfs(int S, int T) {
 	q[h = t = 1] = S;
 	dis[S] = 0;
-	disW[S] = 0.0;
+	disW[S] = 0;
 
 	while(h <= t) {
 		int sta = q[h++];
@@ -105,7 +109,6 @@ void bfs(int S, int T) {
 					disW[to[i]] = disW[sta] + w[i];
 					fromNode[to[i]] = sta;
 					fromEdge[to[i]] = i >> 1;
-					q[++t] = to[i];
 				}
 			}
 	}
@@ -129,8 +132,8 @@ inline void clear() {
 
 void writeFile(int num) {
 	FILE *fp;
-	if(group == 1) fp = fopen("pattern.txt", "w");
-	else fp = fopen("pattern.txt", "a");
+	if(group == 1) fp = fopen(OutputDir.c_str(), "w");
+	else fp = fopen(OutputDir.c_str(), "a");
 
 	map<int, int> tmp;
 
@@ -138,14 +141,19 @@ void writeFile(int num) {
 	int cnt = 0;
 	for(set<int>::iterator it = node.begin(); it != node.end(); it++) {
 		int curNode = *it;
-		int flag = 1;
+		int flag = -1;
 		for(int i = 0; i < num; i++)
 			if(curNode == pendingList[i]) {
-				flag = 0;
+				flag = i;
 				break;
 			}
 		tmp.insert(make_pair(curNode, cnt));
-		fprintf(fp, "%d %d\n", cnt++, flag);
+		if(flag != -1) {
+			fprintf(fp, "%d 0 %d\n", cnt++, flag);
+		}
+		else {
+			fprintf(fp, "%d 1\n", cnt++);
+		}
 	}
 
 	fprintf(fp, "\n");
@@ -162,7 +170,7 @@ void writeFile(int num) {
 }
 
 void go() {
-	FILE *fp = fopen("input.txt", "r");
+	FILE *fp = fopen(InputDir.c_str(), "r");
 
 	int num;
 	char *tmp = new char[MAXN];

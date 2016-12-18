@@ -5,10 +5,13 @@
 
 using namespace std;
 
+const string OldDataDir = "/Users/wzc/Downloads/yagoFacts.tsv";
+const string NewDataDir = "/Users/wzc/Downloads/newFacts.tsv";
 const int MAXN = 10000;
+
 int main() {
-	FILE *fp = fopen("/Users/wzc/Downloads/yagoFacts.tsv", "r");
-	FILE *fout = fopen("/Users/wzc/Downloads/newFacts.tsv", "w");
+	FILE *fp = fopen(OldDataDir.c_str(), "r");
+	FILE *fout = fopen(NewDataDir.c_str(), "w");
 
 	char *tmp1 = new char[MAXN], *tmp2 = new char[MAXN], *tmp3 = new char[MAXN];
 	int show = 0;

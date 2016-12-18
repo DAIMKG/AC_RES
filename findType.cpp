@@ -9,6 +9,10 @@
 #include <vector>
 using namespace std;
 
+const string DataDir = "/Users/wzc/Downloads/yagoSimpleTypes.tsv";
+const string InputDir = "/Users/wzc/Desktop/lab/test/input.txt";
+const string OutputDir = "/Users/wzc/Desktop/lab/test/SameType.txt";
+
 const int MAXL = 17000000;
 const int MAXN = 10000;
 
@@ -17,7 +21,7 @@ vector<vector<set<string> > > myType;
 
 
 void init() {
-	FILE *fp = fopen("/Users/wzc/Downloads/yagoSimpleTypes.tsv", "r");
+	FILE *fp = fopen(DataDir.c_str(), "r");
 
 	char *tmp1 = new char[MAXN], *tmp2 = new char[MAXN];
 	int show = 0;
@@ -38,7 +42,7 @@ void init() {
 
 
 void go() {
-	FILE *fp = fopen("input.txt", "r");
+	FILE *fp = fopen(InputDir.c_str(), "r");
 
 	int num;
 	char *tmp = new char[MAXN];
@@ -64,7 +68,7 @@ void go() {
 }
 
 void findSame() {
-	FILE *fp = fopen("SameType.txt", "w");
+	FILE *fp = fopen(OutputDir.c_str(), "w");
 
 	int n = myType.size(), m = myType[0].size();
 
