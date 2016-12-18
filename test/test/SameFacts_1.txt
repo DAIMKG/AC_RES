@@ -1,0 +1,50 @@
+46
+<__dealsWith>	<Afghanistan>
+<__dealsWith>	<Armenia>
+<__dealsWith>	<Azerbaijan>
+<__dealsWith>	<Egypt>
+<__dealsWith>	<Finland>
+<__dealsWith>	<Georgia_(country)>
+<__dealsWith>	<Germany>
+<__dealsWith>	<Jamaica>
+<__dealsWith>	<Mongolia>
+<__dealsWith>	<Morocco>
+<__dealsWith>	<Netherlands>
+<__dealsWith>	<Paraguay>
+<__dealsWith>	<Sweden>
+<__dealsWith>	<Turkey>
+<__isCitizenOf>	<Abraham_Foxman>
+<__isCitizenOf>	<Alexander_Godunov>
+<__isCitizenOf>	<Alexander_Patashinski>
+<__isCitizenOf>	<Anatoly_Larkin>
+<__isCitizenOf>	<Becky_Hammon>
+<__isCitizenOf>	<Evsey_Domar>
+<__isCitizenOf>	<Ivan_Panin>
+<__isCitizenOf>	<Michael_Rostovtzeff>
+<__isCitizenOf>	<Roman_Vishniac>
+<__isCitizenOf>	<Vladimir_Ipatieff>
+<__isCitizenOf>	<Vladimir_K._Zworykin>
+<__isLocatedIn>	<Anna_Karenina_(1997_film)>
+<__isLocatedIn>	<Captivity_(film)>
+<__isLocatedIn>	<Combat_18>
+<__isLocatedIn>	<Diomede_Islands>
+<__isLocatedIn>	<Little_Vietnam>
+<__isLocatedIn>	<Monsoon_Multimedia>
+<__isLocatedIn>	<Mute_Witness>
+<__isLocatedIn>	<The_Barber_of_Siberia>
+<__isLocatedIn>	<The_Darkest_Hour_(film)>
+<__isLocatedIn>	<The_Miracle_Maker_(2000_film)>
+<__isLocatedIn>	<University_of_the_Arctic>
+<__livesIn>	<Anatoly_Larkin>
+<__livesIn>	<Ivan_Panin>
+<owns>	<LiveJournal>
+<participatedIn>	<Civil_war_in_Afghanistan_(1996–2001)>
+<participatedIn>	<Operation_Active_Endeavour>
+<participatedIn>	<Operation_Enduring_Freedom>
+<participatedIn>	<Operation_Enduring_Freedom_–_Horn_of_Africa>
+<participatedIn>	<People's_General>
+<participatedIn>	<Sierra_Leone_Civil_War>
+<participatedIn>	<War_on_Terror>
+
+0
+
