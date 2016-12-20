@@ -40,7 +40,8 @@ int main(int argc, char* argv[])
 	ifstream fin4(argv[4]);
 	ifstream fin5(argv[5]);
 	string number = argv[6];
-	string file_name = "sparql_" + number + ".txt";
+	string number_type = argv[7];
+	string file_name = "sparql_" + number + "_" + number_type + ".txt";
 	ofstream fout(file_name);
 	// 先输出一个sparql试试看, 最终为了读取方便，要一个sparql一个文件，而不是把所有sparql都搞在一个文件里
 	fout << prefix1;
