@@ -136,7 +136,11 @@ int main(int argc, char* argv[])
 	col = 0;
 	while(fin4 >> num_types)
 	{
-		for (int i = 0; i < num_types; i++)
+		int upper;
+		upper = atoi(argv[7]);
+		if (num_types <= 2)
+			upper = num_types;
+		for (int i = 0; i < upper; i++)
 		{
 			string t;
 			fin4 >> t;
