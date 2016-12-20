@@ -20,13 +20,13 @@ int main(int argc, char* argv[])
 	{
 		string str = s+" "+p;
 		sp_to_f[str] = f;
-		cout << str << " " << f << endl;
+		//cout << str << " " << f << endl;
 	}
 	while(fin2 >> p >> o >> f)
 	{
 		string str = p+" "+o;
 		po_to_f[str] = f;
-		cout << str << " " << f << endl;
+		//cout << str << " " << f << endl;
 	}
 	cout << "tag1: ended reading big files" << endl;
 	int num_attributes;
@@ -53,8 +53,8 @@ int main(int argc, char* argv[])
 				mark[temp[i]] = 1;
 			}
 		}
-		for (int i = 0; i < num_attributes; i++)
-			cout << "temp[i]=" << temp[i] << endl;
+		//for (int i = 0; i < num_attributes; i++)
+			//cout << "temp[i]=" << temp[i] << endl;
 		for (int i = 0; i < num_attributes - 1; i++)
 		{
 			for (int j = 0; j < num_attributes - i - 1; j++)
@@ -63,22 +63,22 @@ int main(int argc, char* argv[])
 				if (mark[temp[j]] == 0) 
 				{
 					f_a = sp_to_f[temp[j]];
-					cout << temp[j] << " " << f_a <<" " << "and the frequency is " << f_a << endl;
+					//cout << temp[j] << " " << f_a <<" " << "and the frequency is " << f_a << endl;
 				}
 				else
 				{
 					f_a = po_to_f[temp[j]];
-					cout << temp[j] << " " << f_a << endl;
+					//cout << temp[j] << " " << f_a << endl;
 				}
 				if (mark[temp[j+1]] == 0)
 				{
 					f_b = sp_to_f[temp[j+1]];
-					cout << temp[j+1] <<  " " << f_b << endl;
+					//cout << temp[j+1] <<  " " << f_b << endl;
 				}
 				else
 				{
 					f_b = po_to_f[temp[j+1]];
-					cout << temp[j+1] << " " << f_b << endl;
+					//cout << temp[j+1] << " " << f_b << endl;
 				}
 
 				if (f_a < f_b)
