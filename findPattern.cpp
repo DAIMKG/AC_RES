@@ -9,24 +9,34 @@
 #include <set>
 using namespace std;
 
-const string DataDir = "/Users/wzc/Downloads/yagoFacts.tsv";
-const string InputDir = "/Users/wzc/Desktop/lab/test/input.txt";
-const string OutputDir = "/Users/wzc/Desktop/lab/test/pattern.txt";
+const string tmpDir = "/Users/wzc/Desktop/lab/test/";
+
+const string InputFile = tmpDir + "input.txt";
+const string OutputFile = tmpDir + "pattern.txt";
+
+const string EntityFile = tmpDir + "entityFile.txt";
+const string PFile = tmpDir + "pFile.txt";
+const string EdgeFile = tmpDir + "edge.dat";
+const string GraphFile = tmpDir + "graph.dat";
 
 const int MAXL = 0x3f3f3f3f;
 const int MAXN = 10000;
-const int N = 7800000, M = 12000000;
+const int N = 3000000, M = 12000000;
 
 struct Fact {
-	string s, p, o;
+	int s, o, pNum;
 	Fact(){}
-	Fact(string s_, string p_, string o_):s(s_), p(p_), o(o_){}
+	Fact(int s_, int o_, int pNum_):s(s_), o(o_), pNum(pNum_){}
 };
 
 int m, n;
-map<string, int> pVal;
+
 map<string, int> entityID;
-//string IDentity[N];
+map<string, int> pNumber;
+
+string pName[MAXN];
+
+
 
 int group;
 set<int> node, edge;
@@ -40,53 +50,41 @@ int q[N], h, t, fromNode[N], fromEdge[N];
 int dis[N], disW[N];
 
 void init() {
-	FILE *fp = fopen(DataDir.c_str(), "r");
+	FILE *entity = fopen(EntityFile.c_str(), "r");
+	FILE *p = fopen(PFile.c_str(), "r");
+	FILE *edge = fopen(EdgeFile.c_str(), "rb");
+	FILE *graph = fopen(GraphFile.c_str(), "rb");
 
-	char *tmp1 = new char[MAXN], *tmp2 = new char[MAXN], *tmp3 = new char[MAXN];
-	int show = 0;
+	fread(&n, sizeof(int), 1, graph);
+	fread(&m, sizeof(int), 1, graph);
 
-	fgets(tmp1, MAXN, fp);
-
-	while(~fscanf(fp, "%*s%s%s%s", tmp1, tmp2, tmp3)) {
-		facts[m++] = Fact(tmp1, tmp2, tmp3);
-		if(pVal.find(tmp2) == pVal.end())
-			pVal.insert(make_pair(tmp2, 0));
-		else
-			pVal[tmp2]++;
-
-		if(entityID.find(tmp1) == entityID.end()) {
-			//IDentity[n] = tmp1;
-			entityID.insert(make_pair(tmp1, n++));
-		}
-
-		if(entityID.find(tmp3) == entityID.end()) {
-			//IDentity[n] = tmp3;
-			entityID.insert(make_pair(tmp3, n++));
-		}
+	char *tmp = new char[MAXN];
+	int id;
+	for(int i = 1; i <= n; i++) {
+		fscanf(entity, "%s%d", tmp, &id);
+		entityID[tmp] = id;
 	}
 
-	delete [] tmp1;
-	delete [] tmp2;
-	delete [] tmp3;
-
-	fclose(fp);
-}
-
-inline void add(int x, int y, int z) {
-	int p = graphmr++;
-	to[p] = y; w[p] = z; nxt[p] = head[x]; head[x] = p;
-}
-
-void buildGraph() {
-	memset(head, -1, sizeof head);
-	for(int i = 0; i < m; i++) {
-
-		int x = entityID[facts[i].s], y = entityID[facts[i].o], z = pVal[facts[i].p];
-
-		add(x, y, z);
-		add(y, x, z);
+	while(~fscanf(p, "%s %d", tmp, &id)) {
+		pName[id] = tmp;
 	}
+
+	delete [] tmp;
+
+	fread(facts, sizeof(Fact), m, edge);
+
+	fread(&graphmr, sizeof(int), 1, graph);
+	fread(head, sizeof(int), n, graph);
+	fread(to, sizeof(int), graphmr, graph);
+	fread(w, sizeof(int), graphmr, graph);
+	fread(nxt, sizeof(int), graphmr, graph);
+
+	fclose(entity);
+	fclose(p);
+	fclose(edge);
+	fclose(graph);
 }
+
 
 void bfs(int S, int T) {
 	q[h = t = 1] = S;
@@ -132,8 +130,8 @@ inline void clear() {
 
 void writeFile(int num) {
 	FILE *fp;
-	if(group == 1) fp = fopen(OutputDir.c_str(), "w");
-	else fp = fopen(OutputDir.c_str(), "a");
+	if(group == 1) fp = fopen(OutputFile.c_str(), "w");
+	else fp = fopen(OutputFile.c_str(), "a");
 
 	map<int, int> tmp;
 
@@ -161,7 +159,7 @@ void writeFile(int num) {
 	fprintf(fp, "%lu\n", edge.size());
 	for(set<int>::iterator it = edge.begin(); it != edge.end(); it++) {
 		int curEdge = *it;
-		fprintf(fp, "%d %d %s\n", tmp[entityID[facts[curEdge].s]], tmp[entityID[facts[curEdge].o]], facts[curEdge].p.c_str());
+		fprintf(fp, "%d %d %s\n", tmp[facts[curEdge].s], tmp[facts[curEdge].o], pName[facts[curEdge].pNum].c_str());
 	}
 
 	fprintf(fp, "\n");
@@ -170,7 +168,7 @@ void writeFile(int num) {
 }
 
 void go() {
-	FILE *fp = fopen(InputDir.c_str(), "r");
+	FILE *fp = fopen(InputFile.c_str(), "r");
 
 	int num;
 	char *tmp = new char[MAXN];
@@ -212,10 +210,7 @@ void go() {
 int main() {
 	init();
 	fprintf(stdout, "init() finished!\n");
-	buildGraph();
-	fprintf(stdout, "buildGraph() finished!\n");
 	go();
-	//maximalSpanningTree();
 	return 0;
 }
 
