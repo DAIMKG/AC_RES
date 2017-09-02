@@ -1,0 +1,567 @@
+% IEEE Paper Template for US-LETTER Page Size (V1)
+% Sample Conference Paper using IEEE LaTeX style file for US-LETTER pagesize.
+% Copyright (C) 2006-2008 Causal Productions Pty Ltd.
+% Permission is granted to distribute and revise this file provided that
+% this header remains intact.
+%
+% REVISION HISTORY
+% 20080211 changed some space characters in the title-author block
+%
+\documentclass[10pt,conference,letterpaper]{IEEEtran}
+\usepackage{times,amsmath,epsfig}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{balance} 
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{tabu}
+\usepackage{wrapfig}
+%
+\title{Query Knowledge Graph With Tabular Examples}
+%
+%\author{%
+% author names are typeset in 11pt, which is the default size in the author block
+%{First Author{\small $~^{\#1}$}, Second Author{\small $~^{*2}$}, Third Author{\small $~^{\#3}$} }%
+% add some space between author names and affils
+%\vspace{1.6mm}\\
+%\fontsize{10}{10}\selectfont\itshape
+% 20080211 CAUSAL PRODUCTIONS
+% separate superscript on following line from affiliation using narrow space
+%$^{\#}$\,First-Third Department, First-Third University\\
+%Address Including Country Name\\
+%\fontsize{9}{9}\selectfont\ttfamily\upshape
+%
+% 20080211 CAUSAL PRODUCTIONS
+% in the following email addresses, separate the superscript from the email address 
+% using a narrow space \,
+% the reason is that Acrobat Reader has an option to auto-detect urls and email
+% addresses, and make them 'hot'.  Without a narrow space, the superscript is included
+% in the email address and corrupts it.
+% Also, removed ~ from pre-superscript since it does not seem to serve any purpose
+%$^{1}$\,first.author@first-third.edu\\
+%$^{3}$\,third.author@first-third.edu%
+% add some space between email and affil
+%\vspace{1.2mm}\\
+%\fontsize{10}{10}\selectfont\rmfamily\itshape
+% 20080211 CAUSAL PRODUCTIONS
+% separated superscript on following line from affiliation using narrow space \,
+%$^{*}$\,Second Company\\
+%Address Including Country Name\\
+%\fontsize{9}{9}\selectfont\ttfamily\upshape
+% 20080211 CAUSAL PRODUCTIONS
+% removed ~ from pre-superscript since it does not seem to serve any purpose
+%$^{2}$\,second.author@second.com
+%}
+%
+\begin{document}
+\maketitle
+%
+\begin{abstract} 
+Semantic Web technologies such as RDF and its query language SPARQL
+have opened up the possibility of retrieving information, acquiring knowledge
+and building applications over a large set of linked
+datasets.
+However, in practice, due to the unfamiliarity with both the structure of SPARQL and 
+the data format, ordinary
+users always have great difficulty in obtaining information from 
+the RDF datasets.
+It is not easy, even for professional users, to explore an RDF dataset because of the complex vocabulary of the data, the unknown exact values 
+of literals, the data types, etc. 
+
+To narrow the gap between users' needs and usability of RDF data, we develop a fast and accurate human-in-the-loop 
+RDF query system \textbf{name}
+based on a public SPARQL endpoint,
+which supports generating SPARQL queries automatically based on
+input examples and outputing a list of results as answers to the questions that users ask.
+We demonstrate this system with query reversing engineering supporting flexible user input, along with other techniques, such as in-database analytics, 
+iterative query reconstruction and parallel execution to make it more of practical use.
+\end{abstract}
+
+% NOTE keywords are not used for conference papers so do not populate them
+% \begin{keywords}
+% keyword-1, keyword-2, keyword-3
+% \end{keywords}
+%
+
+%Requirement
+%1. Provide the motivation behind the demonstrated concept(s)
+% Give a good example for the query with multi-instance query. What is the chanllenge for this scenarios.
+
+%2. Describe the system and the technology --> li tian
+% describe the arcitecture clearly. 
+
+%3. Explain what features and scenarios will be demonstrated, and --> zi chen
+% 3.1, interactive; 3.2, SPARQL refinement; 3.3, RDF endpoint. 3.4, entity with same type.
+
+%4. State the novelty and significance of the contribution. -- performance & precision.
+
+\section{Introduction}
+One of the chief obstacles for ordinary users to acquire knowledge 
+from RDF data and for professional users to get some insights into the data before building 
+applications is that the most popular query language of RDF data -- SPARQL, is far from 
+easy to use. Writing a query that well expresses his intention,
+one needs to know every detail of the dataset, e.g., how to correctly describe the literals appearing
+in the triple patterns, what the prefixes of the URLs are,
+and what entities and relations the dataset contain. 
+Also, one needs to have a good
+command of SPARQL syntax and semantics to form
+safe and expressive queries, which are too demanding for ordinary users. For instance, the query in Figure \ref{fig1} expresses one's intention to discover the president and the first lady of  countries around the world. To write such a SPARQL query, she must know the correct URLs as the prefixes of entities, the specific predicate in YAGO (e.g., it's \emph{isPoliticianOf}, not \emph{is\_politician\_of}), the accurate form of the entity type `first lady' (it's \emph{wordnet\_first\_lady\_110092880}, not anything else that is even slightly different from that), etc.
+
+\begin{figure}
+    
+    \includegraphics[width=0.5\textwidth,height=3cm]{figure/accurate}
+    \caption{ A standard SPARQL query that helps a user to discover the the president and the first lady of a country}
+    \label{fig1}
+\end{figure}
+%Example1.
+% find all people whose date of death is before date of birth --> 
+% how to write a SPARQL in latex?
+%\lstdefinestyle{mystyle}{
+%    breakatwhitespace=false,         
+%    breaklines=false,                 
+%    captionpos=b,                    
+%    keepspaces=false,                        
+%    numbersep=1pt,                  
+%    showspaces=false,                
+%    showstringspaces=false,
+%    showtabs=true,                  
+%    tabsize=8
+%}
+% 
+%\lstset{style=mystyle}
+%\begin{lstlisting}[language=SPARQL, caption=, label=lst:sparql]
+%  PREFIX rdf:<http://yago-knowledge.org/resource/>
+%  PREFIX  types: <http://dbpedia.org/class/yago/>
+%  SELECT ?politician ?country ?first_lady
+%  WHERE {
+%    ?politician rdf:isPoliticianOf ?country .
+%    ?politician rdf:isMarriedTo ?first_lady .
+%    ?fisrt_kady rdf:type types:wordnet_first_lady_110092880 .
+%  }
+%\end{lstlisting}
+
+%  PREFIX    rdf:<http://yago-knowledge.org/resource/>
+%SELECT    ?0    ?1    ?2    WHERE {
+%        ?0    rdf:isPoliticianOf    ?1 .
+%        ?0    rdf:isMarriedTo    ?2 .
+%        FILTER  NOT  EXISTS {
+%                ?1    rdf:graduatedFrom    rdf:University_of_Sydney .
+%        }
+%}
+%
+To tackle this issue, we follow the query reversing engineering idea which has been extensively studied in different contexts, including relational databases \cite{tran2014query}, graph databases \cite{graph}, RDF \cite{querybyexample} and XML \cite{xml}. 
+When it comes to RDF data,
+some previous work has been done to automatically generate SPARQL queries based on 
+user input \cite{querybyexample, reversewww, sparqlbye, discovering}. Since linked RDF data is represented as graphs naturally,
+these methods usually begin by expanding subgraphs of interest on the whole data iteratively and adopting many pruning strategies later, which is still expensive to compute though.
+For better usability, some query relaxation techniques \cite{EKG, sapphire} are also proposed to suggest exact 
+literals from vague triple-like user inputs.
+However, these queries are not precise enough to fully capture 
+user intention since they are recommended to users
+mainly based on some pre-stored statistics of the data and the semantics of every single input entity separately,
+thus losing the relationship between input entities to a great extent.
+
+
+We have made the following \textbf{contributions}.
+(1) Our system is more user-friendly in the sense that
+it supports more flexible user input as a 2-dimension matrix and iterative answer refinement.
+We map inaccurate user input to exact vertices in RDF graphs.
+%The format of input can be a set of tuples, a tuple and an entity alone. After 
+After obtaining the initial answers the system returns,
+the user can interact with the system and drop out the answers 
+that don't match his intention and the system will reconstruct
+SPARQL queries accordingly.
+(2) We improve the query quality by fully considering the correlation between input entities, both their similarities and relations, via in-database analytics and maximal
+substructure detection. We improve the performance of the system
+in the meantime by parallelizing the data-independent pipeline 
+and building it on a public SPARQL endpoint \footnote{https://linkeddata1.calcul.u-psud.fr/sparq}.
+(3) [\textcolor{red}{How to evaluate?}] We conduct an extensive user study ? XXXXXXXXXXXXXXXXXXXXX
+
+The following of the paper is organized as follows. In Section 2, we will formalize the problem, demonstrate the system overview and illustrate
+different modules contained in \textbf{name}. Then, the demo scenario
+and user interface is presented in Section 3. We conclude our paper in Section 4.
+
+
+
+
+\section{Problem definition}
+
+\begin{figure}
+    \includegraphics[scale=0.42]{figure/pipeline}
+    \caption{A system overview}
+    \label{pipe}
+\end{figure}
+
+We first give a formal problem definition, then illustrate the architecture in detail.\\
+\vspace{0.1ex}
+%\subsection{Problem statement}
+Before stating our problem, we give a few notations that will be used in our discussion.
+
+\vspace{0.2cm}
+\textbf{RDF} is short for Resource Description Framework.
+It consists of records organized in the form of triples --
+($s, p, o$) where $s$ is \emph{subject}, $p$ is \emph{predicate} and $o$ is \emph{object}. A \textbf{RDF graph} is a directed graph $G(V, E, L)$
+with a node set $V$ and an edge set $E$.
+Each node $v \in V$ represents an entity (can be either $s$
+or $o$) and has a unique identifier $L(v)$. Each edge $e=(v_i, v_j) \in E$ denotes a directed relationship $p$ from entity $v_i$ to entity
+$v_j$ with a label $L(e)$. 
+
+
+\vspace{0.2cm}
+\textcolor{red}{need to rewrite later, first state the background}
+
+\textbf{\underline{Problem definition.}}
+Intuitively, \textbf{name} takes as input a set of tuples, constructs a series of ranked SPARQL queries and return the results of them,
+each a superset of input entities.
+The user input may be inaccurate since it's difficult for him/her to know exactly what the entity literals in the graph $G$ look like.
+We map the inaccurate entities to the exact ones that is unique in $G$.
+Formally:
+
+\textup{\textbf{Input:} Assume the user input is a matrix? 
+    $\tilde{E}_{m \times n}$.
+    The mapping we build is $f: \tilde{E}_{m \times n} \rightarrow E_{m \times n}$. For each $\tilde{e}(i,j) \in \tilde{E}_{m \times n}$, $f(\tilde{e}(i,j))=e(i, j)$. $e(i,j) \in  E_{m \times n}$ and $e(i,j) \in G$.}
+
+The $i$-th row  $e(i,0),...,e(i, n-1) $ of $E_{m \times n}$ is a typical result the user desires (i.e., a row in a table that a possible SPARQL query returns).
+\textbf{Name} supports inputting $m$ set example tuples, each consisting of $n$ entities related with each other, which together 
+form the matrix $\tilde{E}_{m \times n}$ logically.
+Somewhat similar with a relational table, 
+entities in the same column
+are of the same type and the relations between entities in a row are the same
+as that in a different row, but in the same columns, i.e., the relations between
+$e(i, k)$ and $e(i, t)$ are the same as those between $e(j,k)$
+and $e(j,t)$.
+
+\textbf{Output:} A set of ranked SPARQL queries 
+$Q_1, Q_2,..., Q_n$ and their corresponding results $R_1, R_2,...,R_n$ after evaluation, $s.t.$ $E_{m \times n} \subseteq R_1, E_{m \times n} \subseteq R_2,..., E_{m \times n} \subseteq R_n$.
+
+\vspace{0.2cm}
+\textbf{Example 1. User input and system output}
+
+Suppose the user wants to discover each country's president and its first lady, in order to obtain the answers directly, he may turn to a knowledge base rather than a search engine.
+He has already known some famous examples to his question. So the following user input forms  $\tilde{E}_{2 \times 3}$:
+\begin{center}
+    \begin{tabu}to 0.48\textwidth{ | X[c] | X[c] | X[c] | } 
+        \hline
+        barakobama & Unitedstates  & michelle \\ 
+        \hline
+        xijinpin &  China  & pengliyuan \\ 
+        \hline
+    \end{tabu}
+\end{center}
+We then map it to $E_{m \times n}$ containing the accurate entities in the RDF graph :
+
+\begin{center}
+    \begin{tabu}to 0.48\textwidth{ | X[c] | X[c] | X[c] | } 
+        \hline
+        Barack\_Obama & United\_States  & Michelle\_Obama \\ 
+        \hline
+        Xi\_Jinping &  China  & Peng\_Liyuan \\ 
+        \hline
+    \end{tabu}
+\end{center}
+
+Our system will return a set of ranked SPARQL queries and the results of those queries. In this case, part of the results look like the following:
+
+\begin{center}
+    \begin{tabu}to 0.48\textwidth{ | X[c] | X[c] | X[c] | } 
+        \hline
+        Barack\_Obama & United\_States  & Michelle\_Obama \\ 
+        \hline
+        John\_Hewson &   Australia &  Jessica\_Wilson\\ 
+        \hline
+        John\_Howard &   Australia &  Janette\_Howard\\ 
+        \hline
+        Xi\_Jinping & China & Peng\_Liyuan \\
+        \hline
+        Tony\_Abbott & Australia & Margie\_Abbott \\
+        \hline
+        Ville\_Niinistö & Finland & M.Wetterstrand \\
+        \hline
+    \end{tabu}
+\end{center}
+
+
+\vspace{0.1ex}
+
+%\textcolor{red}{give better names for different modules}
+\section{System architecture}
+\subsection{Overview}
+Figure \ref{pipe} demonstrates the architecture of \textbf{Name}. 
+After receiving user input matrix $\tilde{E}_{m \times n}$, it first maps them to ${E}_{m \times n}$ via entity disambiguation. 
+Given the accurate entities we have, it enters common attributes discovering
+module to uncover similarities among the entities in a specific column $i \ (i = 0,\ldots,n-1)$,
+generating a set of common attributes (including entity types) for
+entities in each column.
+For entities in the same row, \textbf{Name} detects the 
+common relations among them by constructing several minimal subgraphs, each including all entities in a row and 
+finding the maximal common substructure of these subgraphs.
+Each of our final SPARQL query contains the common structure of the graphs and part of
+the ranked common attribute triples.
+
+We then display the results returned by a public endpoint to our users and accept their 
+feedback of negative examples (i.e., the tuples contrary
+to their intent) to reconstruct the SPARQL queries iteratively until reaching the 
+answers that the user is satisfied with.
+
+
+\subsection{System components}
+We then illustrate in detail about XX's workflow.
+
+\vspace{0.2cm}
+\textbf{Entity disambiguation.}
+This module takes as input a matrix $\tilde{E}_{m \times n}$ (inaccurate user input),
+and outputs an accurate entity matrix $E_{m \times n}$, each element in which is
+chosen by the user from the candidate entities we provide, thus
+we have all the exact example vertices $V_{input} \subseteq V(G)$ 
+in the RDF graph $G$.
+We implement this via the \textcolor{blue}{Jaro-Winkler distance algorithm} \textbf{reference} to measure the edit distance between user input strings and entities in the RDF graph. Users will be given top $k$ candidate entities based on the distance and choose the one matching his intention to feed into the system. 
+
+
+\vspace{0.2cm}
+\textbf{Common attributes discovering.} 
+%It is implemented for us to extract directly the common features among the sets of tuples of user input.
+We split this module into two parts: \textbf{type inferring} which produces common
+types of entities in a column and \textbf{interesting feature discovering} which 
+outputs important features of the entities the user desires. 
+\textbf{Name} infers the type using the pre-computed `type' information of the dataset.
+
+For entities $(e(1,i),\  e(2,i),..., e(m,i))$ in $E_{m \times n}$ $(i = 1$,...,$n)$,
+we consider:
+
+\begin{itemize}
+    \item the same \emph{types} of $e(j,i),\ j=1,2,...,m$
+    \item the same \emph{p} and \emph{o} of triples in which $e(j,i)$
+    acts as \emph{s}, $j=1,2,...,m$
+    \item the same \emph{s} and \emph{p} of triples in which $e(j,i)$
+    acts as \emph{s}, $j=1,2,...,m$
+\end{itemize}
+
+\vspace{0.6ex}
+\textcolor{blue}{In order to speed up the execution, we utilize the pre-stored type and attribute information in the RDF graph (knowledge base) and express common attributes discovering via SPARQL queries.} Analyzing such information inside the database makes it possible to avoid the shipment of large amounts of data. We then add the selected common attributes to the SPARQL queries we are going to construct.
+
+\vspace{0.2cm}
+\textbf{Example 2.} To answer the queries in Example 1, \textbf{name} discovers the common attributes for entities in each column. Part of them is shown in the following table in a form of SPARQL triples (need ranking and filtering later):
+
+\begin{center}
+    \begin{tabu}to 0.45\textwidth{ | X[l] |  X[l] | X[l] | } 
+        \hline
+        ?politician & type & Living\_people \\ 
+        \hline
+        ?country &   type & admin.district\\ 
+        \hline
+        ?first\_lady & type & Living\_people  \\
+        \hline
+        ?politician &	hasGender	&      male \\
+        \hline
+        ?country & participatedIn	  &    War\_on\_Terror \\
+        \hline
+        ?country & dealsWith	   &   Germany \\
+        \hline
+        ?first\_lady & hasGender &	   female \\
+        \hline
+    \end{tabu}
+\end{center}
+
+
+\vspace{0.2cm}
+\textbf{Common relations finding.}
+First, for each row $i$ $(i=1,...,m)$, \textbf{Name} constructs a `minimal but most significant' directed graph
+$G'(V', E', L)$. $G'$ is a subgraph of $G(V, E, L)$ and
+$(e(i,1), e(i,2),...,e(i,n)) \subseteq V'(G')$.
+It has a relatively small size but has 
+the largest value among all minimal graphs
+after summing up
+all weights assigned to each edge in the graph.
+Each directed edge $e \in E(G)$ is transformed to bi-directed one for convenience. We then find an \textbf{optimal path} between each pair of entities, which forms the final pattern used in the SPARQL queries. \textcolor{blue}{The optimal path is defined as follows:}
+\begin{itemize}
+    \item The shortest path between two entities is considered to be optimal.
+    \item If there are multiple shortest paths, find the shortest path that has the largest weight by adding up all edges' weights in the path.
+\end{itemize}
+The core idea is Breadth-First-Search. We maintain a queue and two arrays to record the shortest path from some beginning node to a given node  the largest weight under the shortest path.
+After gathering a pattern for each row of entities, \textbf{name} produces the maximal common
+substructure following the algorithm proposed in multi-query
+optimization.(\ref{...})\\
+
+\textbf{Example 3.} For the input entities in Example 1, the maximal common substructure we discover is as follows:
+
+
+
+\begin{center}
+    \begin{tabu}to 0.45\textwidth{ | X[c]   X[c]  X[c] | } 
+        \hline
+        ?first\_lady & isMarriedTo  & ?politician \\ 
+        \hline
+        ?politician &   isPolotocianOf  & ?country\\ 
+        \hline
+    \end{tabu}
+\end{center}
+
+
+
+\vspace{1.6ex}
+
+\textbf{SPARQL ranking.}
+Since the maximal common pattern is always small and contains the necessary semantic information
+that we cannot drop any of the triples in the pattern,
+we focus mainly on selecting the common attributes
+among entities in a column. In a RDF dataset, the attributes of a certain 
+entity we detect are in huge sizes and sometimes not of practical use to construct our SPARQL queries. For instance, for a specific type of person
+the user desires to know, the common attributes `person' is unnecessary in the SPARQL query since it will certainly include some subclass of `person'.
+This is a common case where an attribute is too general. Also, we may encounter such a case that the scope of the concept the common attributes refer to is too narrow. For instance, ...It is worse because it will lead to much smaller result sets
+while more general attributes will not affect the accuracy 
+of SPARQL query results actually.
+We ask: \emph{What kind of common attributes meet users' 
+    expectation of the results most?} This question is difficult to answer, as 
+the common attributes with too few instances in the knowledge base may be so rare that no one will care about (e.g.,)
+while the attributes with a large number of instances may just be too common to select 
+the answers users want (e.g., $<living\_people>$).
+Also, it is hard to infer users' real intention only based on a few entities they provide.
+
+\textcolor{blue}{For now, we rank the common attributes based on their frequency -- the attributes with the highest frequency may be the most interesting.}
+\textcolor{blue}{How to say we add \textbf{2} facts and \textbf{2} types with the highest frequency?}
+
+\textcolor{red}{Furthermore, we address this problem by interacting with users -- accepting their feedbacks of negative results and adjusting the SPARQL queries accordingly.}
+
+\vspace{0.2cm}
+\textbf{Human in the loop.} It's often the case that the user searches for an answer for multiple times in a search engine until reaching a satisfying one. It is the same with Question-Answering using knowledge graphs.
+Initially, the SPARQL query with the highest ranking will
+outputs a set of tuples that may be answers of interest to the user. The user has the right to decide which answers he does not want to accept
+which will be fed as `negative seeds' into our system to reconstruct the SPARQL queries using the \textbf{FILTER NOT EXISTS} key word. A `FILTER NOT EXISTS' group contains a series of rules, which is used to filter the results that conform the rules. Multiple `FILTER NOT EXISTS' groups are premitted in one SPARQL query, so we can readily add a new group at the end of the latest SPARQL query after the user gives us feedback.
+
+We then need to choose some rules adding to a `FILETER NOT EXISTS' group based on `negative seeds'. Again, \textbf{name} discovers common attributes of each column of negative and postive entities, which is introduced at \textbf{Common attributes discovering}. The set of negative common attributes subtracts the set of postive ones, and we will get some particular common attributes that only belong to negative results. However, we face the similar problem: \emph{What kind of common attributes that the user don't want?} \textcolor{blue}{How to say we add \textbf{1} facts and \textbf{1} types with the highest frequency?}
+
+\textbf{An example here}
+
+\vspace{1.2ex}
+
+\section{Related work}
+
+(1) \underline{Query reversing engineering.}
+\emph{Reverse engineering} is the general problem of abstracting user examples into an explanatory query. For a query language $L$, a \emph{query-by-example} system is often presented with a database $D$ and $n$-ary relations $S$. The \emph{definability} problem is that whether there exists a query $q$ in $L$ such that $q(D)=S$. 
+
+In the relational database context, this problem is coNEX-
+PTIME-complete\cite{barcelo2016complexity}. For SPARQL queries over RDF which is supported by our system, several approaches have been proposed to address this problem in previous work\cite{sparqlbye,querybyexample,reversewww,sapphire}. 
+Basically, most of them generate relatively small queries at first and extend the queries by adding interesting patterns. How to choose the patterns, how to rank the results via weighted edges/nodes and how to optimize query evaluation has all more or less been studied.
+However, some of the work\cite{reversewww,sparqlbye} focuses on theoretical complexity by assuming that 
+the user input is a mapping from variables in SPARQL queries to entities in the knowledge base, which is not of practical use.
+\cite{querybyexample} first constructs a weighted subgraph of the knowledge base containing all input entities and then models the answer space as a query lattice to evaluate the queries from bottom to the top.
+Although it materializes the results of the queries in the lower layers of the lattice and creates hash tables to speed up the execution, the answer space is still too large to compute efficiently. \cite{discovering} works in the similar way that it evaluates queries as they are extending and does incremental SPARQL pattern matching . But it requires the top-$k$ ranked results must include all input examples. However, it only supports one or two input entities, which is difficult to be used to catch user intent. 
+
+We rely on the public endpoint to do the query optimization and parallelize the whole process to achieve better performance. Also, we impose no constraints on user input and support both positive and negative examples.
+
+(2) \underline{Query relaxation.}
+\emph{Query relaxation} is another direction towards solving the usability problem of knowledge graphs. The advantage of \emph{query relaxation} in general is that it can create `cooperative' databases that return answers beyond those specified by a standard query. It has been used successfully in deductive databases\cite{deductive_relax}, relational databases\cite{relational_relax}, XML documents\cite{xml_relax} and knowledge graphs\cite{EKG,sapphire}.
+\cite{EKG} first extends the knowledge graph by running open IE, followed by query relaxation techniques such as rewriting predicates, replacing triple patterns and suggesting alternative queries. Similarly, \cite{sapphire} recommends changes of the query to the user based on a predictive user model.
+We don't expect our users to input triple-like queries in our system. Instead, they only need to provide several examples, where more users' needs can be satisfied, including whose who have no knowledge about SPARQL. But our system somewhat `relaxes' the query by supporting vague input entities to be mapped into accurate ones later.
+
+
+
+\section{demonstration scenarios}
+We demonstrate \textbf{name}, a question-answering system based on knowledge graphs with query reversing engineering.
+
+\textbf{Setting.} We build \textbf{name} on the huge semantic knowledge base Yago which consists of more than 10 million entities and 120 million entities and and use a public endpoint as the execution backend. After mapping the input matrix to accurate entities in the knowledge graph, it discovers the relations between entities in the same rows and the common features of entities in the same columns. Then it constructs a set of SPARQL queries and returns the answers via an interface. It supports iterative query re-constructing filtering negative examples to fully capture user intent. To achieve better performance, we parallelize the \emph{common attributes/features discovering} and the \emph{common relations finding} modules since the data are independent across them.
+
+\textbf{Query examples.}
+
+\textbf{\underline{Query 1:}} \emph{Find the most popular currency one country used.}
+
+Figure \ref{interface} shows a simple query interface. Users can feed their input matrix into our system here. We map each of the vague entities into accurate ones by providing a list of top-k candidates for users to choose from (Figure \ref{cand_entity}).
+The SPARQL which ranks first returned by our system is shown in Figure \ref{sparql}. [\textcolor{red}{what if the range of sparql query is too narrow, like this example?}] If the user thinks `ISO\_4217' in the \emph{currency} column (column 2) does not make sense to him and wants to drop it, our system will accept any negative examples he provides and reconstruct SPARQL queries to return different sets of results (Figure \ref{iterative}).
+
+
+\begin{figure}
+    \includegraphics[scale=0.4]{figure/input}
+    \caption{User input interface (screenshot)}
+    \label{interface}
+\end{figure}
+\begin{figure}
+    
+    \includegraphics[width=0.15\textwidth]{figure/cand1}
+    \includegraphics[width=0.15\textwidth]{figure/cand2}
+    %\caption{}
+    \caption{Top-5 entity disambiguation results in Yago for users to choose from}
+    \label{cand_entity}
+\end{figure}
+\begin{figure*}
+    \includegraphics[width=1.0\textwidth]{figure/sparql}
+    \caption{A SPARQL query ranking 1st generated to answer the query}
+    \label{sparql}
+\end{figure*}
+\begin{figure}
+    \includegraphics[width=0.2\textwidth]{figure/negative_feedback}
+    %\caption{Negative examples provided by users}
+    \includegraphics[width=0.2\textwidth]{figure/after}
+    %\caption{Results returned after ... }
+    \caption{Iterative query: results before (left) and after (right) users providing `negative seeds' }
+    \label{iterative}
+\end{figure}
+
+\textbf{\underline{Query 2:}} \emph{Find the films directed by Ang Lee and its main character.}
+
+Input: Figure \ref{anglee1}
+
+SPARQL generated: Figure \ref{anglee2}
+
+Results returned: Figure \ref{anglee3}
+
+\begin{figure}
+    \includegraphics[scale=0.4]{figure/anglee/anglee1}
+    \caption{Input of query 2: examples of Ang Lee's films and their main characters}
+    \label{anglee1}
+\end{figure}
+
+\begin{figure*}
+    \includegraphics[width=1.0\textwidth]{figure/anglee/anglee2}
+    \caption{SPARQL generated for query 2}
+    \label{anglee2}
+\end{figure*}
+
+\begin{figure}
+    \includegraphics[scale=0.4]{figure/anglee/anglee3}
+    \caption{Results of query 2}
+    \label{anglee3}
+\end{figure}
+
+
+\textbf{\underline{Query 3:}} \emph{Find the famous economists, the most popular theories they created and their countries}
+
+Input: Figure \ref{eco1}
+
+SPARQL generated: Figure \ref{eco2}
+
+Results returned: Figure \ref{eco3}
+
+\begin{figure}
+    \includegraphics[scale=0.4]{figure/economists/economist1}
+    \caption{Input of query 3: examples of famous economists, their popular theories and nationalities}
+    \label{eco1}
+\end{figure}
+
+\begin{figure*}
+    \includegraphics[width=1.0\textwidth]{figure/economists/eco2}
+    \caption{SPARQL generated for query 3}
+    \label{eco2}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=0.6\textwidth]{figure/economists/eco3}
+    \caption{Results of query 3}
+    \label{eco3}
+\end{figure*}
+
+
+
+\section{Conclusions}
+We demonstrate \textbf{}
+
+%\end{document}  % This is where a 'short' article might terminate
+
+
+
+
+
+\bibliographystyle{IEEEtran}
+\bibliography{demo} 
+
+\end{document}
